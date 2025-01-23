@@ -1,9 +1,12 @@
 ---
+import { Image } from 'astro:assets';
+import profileImage from '../images/profile.jpg';
+
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout> 
-	<img class="rounded-full mb-8 w-24 h-24" src="https://cdn.sanity.io/images/fcrto863/production/7cb22cff61a785930de7303491bc68f24b7a11a2-960x1280.jpg?rect=0,70,960,984&amp;w=256&amp;q=100&amp;auto=format" alt=" ">
+	<Image class="rounded-full mb-8 w-24 h-24" src={profileImage} alt="A picture of me, taken in New Zealand" />
 	<h1 class="text-4xl font-extrabold tracking-tight text-slate-700 mb-6">Consultant, tech lead and problem solver.</h1>
 	<p class="text-base mb-4">Phil Lennon, a specialist Frontend &amp; UI Consultant with Full Stack development and leadership experience from Manchester, UK.</p>
 	<p class="text-base mb-6">With 18 years working in tech, I can help build a team, processes and development culture from scratch or just quickly pitch in to build a new idea.</p>
