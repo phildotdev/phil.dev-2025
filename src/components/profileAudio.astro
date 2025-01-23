@@ -1,0 +1,78 @@
+---
+import { Image } from 'astro:assets';
+import profileImage from '../assets/images/profile.jpg';
+
+// TODO: Tailwind v4 has classes baked in for preserve-3d, rotate and backface-visibility. Use defaults when available
+// TODO: Investigate if we need to wait for domcontentloaded in code or does astro handle this automatically
+// TODO: Accessability improvements, ie keyboard navigation
+---
+<div class="js-audio group w-24 h-24 mb-8 perspective-normal">
+	<div class="relative duration-500 transform-gpu motion-reduce:hover:transform-none [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]"> 
+		<div class="absolute inset-0 [backface-visibility:hidden]">
+			<Image class="rounded-full w-24 h-24" src={profileImage} loading="eager" alt="Profile of me, taken in New Zealand" />
+		</div>
+		<div class="absolute inset-0 w-24 h-24 flex items-center justify-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+			<button class="js-audio-play text-slate-600">
+				<span class="js-audio-icon-play block"><i class="text-5xl fa-regular fa-play"></i></span>
+				<span class="js-audio-icon-playing hidden"><i class="text-5xl fa-regular fa-volume"></i></span>
+				<span class="js-audio-icon-played hidden"><i class="text-5xl fa-regular fa-game-console-handheld"></i></span>
+			</button>
+
+			<audio class="js-audio-element" preload='none'>
+				<source src="/frontendphil.mp3" type="audio/mp3" />
+			</audio>			
+		</div>
+	</div>
+</div>
+
+<style>
+</style>
+
+<script>
+  	typeof window !== 'undefined' && document.addEventListener('DOMContentLoaded', function () {
+		const containerEl = document.querySelector('.js-audio') as HTMLElement;
+
+		if (!containerEl) {
+			return;
+		}		
+
+		const audioEl = document.querySelector('.js-audio-element') as HTMLAudioElement;
+		const buttonEl = document.querySelector('.js-audio-play') as HTMLElement;
+		const playIconEl = document.querySelector('.js-audio-icon-play') as HTMLElement;
+		const playingIconEl = document.querySelector('.js-audio-icon-playing') as HTMLElement;
+		const playedIconEl = document.querySelector('.js-audio-icon-played') as HTMLElement;
+		let hasAudioPlayed = false;
+
+    	buttonEl.addEventListener('click', () => {
+			playAudio();
+		});
+
+		audioEl.addEventListener('ended', () => {
+			playingIconEl.classList.remove('block');
+			playingIconEl.classList.add('hidden');
+			playedIconEl.classList.remove('hidden');
+			playedIconEl.classList.add('block');
+		});	
+
+		const playAudio = () => {
+			audioEl.play();			
+			changeIcon();
+			hasAudioPlayed = true;
+		}
+
+		const changeIcon = () => {
+			if (!hasAudioPlayed) {
+				playIconEl.classList.remove('block');
+				playIconEl.classList.add('hidden');
+
+				playingIconEl.classList.remove('hidden');
+				playingIconEl.classList.add('block');
+			} else {
+				playedIconEl.classList.remove('block');
+				playedIconEl.classList.add('hidden');	
+				playingIconEl.classList.remove('hidden');
+				playingIconEl.classList.add('block');
+			}
+		}
+	});
+</script>
