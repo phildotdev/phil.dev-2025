@@ -3,17 +3,15 @@ import { Image } from 'astro:assets';
 import profileImage from '../assets/images/profile.jpg';
 
 // TODO: Tailwind v4 has classes baked in for preserve-3d, rotate and backface-visibility. Use defaults when available
-// TODO: Investigate if we need to wait for domcontentloaded in code or does astro handle this automatically
 // TODO: Accessability improvements, ie keyboard navigation
 // TODO: Make work on mobile
-// TODO: Change the style of this by clicking the picture, keeping the icons visible and then switch back to profile
 ---
-<div class="js-audio group w-24 h-24 mb-8 perspective-normal">
-	<div class="relative duration-500 transform-gpu motion-reduce:hover:transform-none [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]"> 
-		<div class="absolute inset-0 [backface-visibility:hidden]">
+<div class="js-audio w-24 h-24 mb-8 perspective-normal">
+	<div class="js-audio-animation-parent relative duration-500 transform-gpu motion-reduce:hover:transform-none [transform-style:preserve-3d] hover:[transform:rotateY(180deg)]"> 
+		<div class="js-audio-animation-profile absolute inset-0 [backface-visibility:hidden]">
 			<Image class="rounded-full w-24 h-24" src={profileImage} loading="eager" alt="Profile of me, taken in New Zealand" />
 		</div>
-		<div class="absolute inset-0 w-24 h-24 flex items-center justify-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+		<div class="js-audio-animation-audio absolute inset-0 w-24 h-24 flex items-center justify-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
 			<button class="js-audio-play text-slate-600">
 				<span class="js-audio-icon-play block"><i class="text-5xl fa-regular fa-play"></i></span>
 				<span class="js-audio-icon-playing hidden"><i class="text-5xl fa-regular fa-volume"></i></span>
@@ -40,41 +38,58 @@ import profileImage from '../assets/images/profile.jpg';
 
 		const audioEl = document.querySelector('.js-audio-element') as HTMLAudioElement;
 		const buttonEl = document.querySelector('.js-audio-play') as HTMLElement;
+		const animationParentEl = document.querySelector('.js-audio-animation-parent') as HTMLElement;
+		const animationProfileEl = document.querySelector('.js-audio-animation-profile') as HTMLElement;
+		const animationAudioEl = document.querySelector('.js-audio-animation-audio') as HTMLElement;
 		const playIconEl = document.querySelector('.js-audio-icon-play') as HTMLElement;
 		const playingIconEl = document.querySelector('.js-audio-icon-playing') as HTMLElement;
 		const playedIconEl = document.querySelector('.js-audio-icon-played') as HTMLElement;
-		let hasAudioPlayed = false;
 
     	buttonEl.addEventListener('click', () => {
 			playAudio();
 		});
 
-		audioEl.addEventListener('ended', () => {
-			playingIconEl.classList.remove('block');
-			playingIconEl.classList.add('hidden');
-			playedIconEl.classList.remove('hidden');
-			playedIconEl.classList.add('block');
-		});	
-
 		const playAudio = () => {
 			audioEl.play();			
 			changeIcon();
-			hasAudioPlayed = true;
 		}
 
 		const changeIcon = () => {
-			if (!hasAudioPlayed) {
-				playIconEl.classList.remove('block');
-				playIconEl.classList.add('hidden');
+			// Set an animation lock while audio plays
+			animationParentEl.classList.add('!transform-none');
+			animationProfileEl.classList.add('hidden');
+			animationAudioEl.classList.add('!transform-none');
 
-				playingIconEl.classList.remove('hidden');
-				playingIconEl.classList.add('block');
-			} else {
+			playIconEl.classList.remove('block');
+			playIconEl.classList.add('hidden');
+
+			playingIconEl.classList.remove('hidden');
+			playingIconEl.classList.add('block');
+	}
+
+		const resetPlayer = () => {
+			// Wait then remove animation lock
+			setTimeout(function () {
+				animationParentEl.classList.remove('!transform-none');
+				animationProfileEl.classList.remove('hidden');
+				animationAudioEl.classList.remove('!transform-none');
+
 				playedIconEl.classList.remove('block');
 				playedIconEl.classList.add('hidden');	
-				playingIconEl.classList.remove('hidden');
-				playingIconEl.classList.add('block');
-			}
+
+				playIconEl.classList.remove('hidden');
+				playIconEl.classList.add('block');
+			}, 2000);					
 		}
+
+		audioEl.addEventListener('ended', () => {
+			playingIconEl.classList.remove('block');
+			playingIconEl.classList.add('hidden');
+
+			playedIconEl.classList.remove('hidden');
+			playedIconEl.classList.add('block');
+
+			resetPlayer();	
+		});			
 	});
 </script>
