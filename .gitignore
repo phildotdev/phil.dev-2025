@@ -25,3 +25,4 @@ pnpm-debug.log*
 
 # ignore npmrc so token doesn't leak
 .npmrc
+.vercel
