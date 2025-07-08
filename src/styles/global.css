@@ -11,7 +11,6 @@
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2rem;
   text-decoration-color: lightgray;
-  cursor: pointer;
   transition: text-decoration-color 300ms 300ms;
 }
 
