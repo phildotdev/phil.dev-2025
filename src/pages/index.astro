@@ -2,30 +2,123 @@
 import Layout from '../layouts/Layout.astro';
 import ProfileAudio from '../components/profileAudio.astro';
 import FontAwesome from '../components/FontAwesome.astro';
+import ContactForm from '../components/ContactForm.astro';
 ---
 
 <Layout> 
-	<ProfileAudio></ProfileAudio>
-	<h1 class="text-4xl font-bold tracking-tight text-slate-700 dark:text-slate-200 mb-6">Consultant, tech lead and problem solver.</h1>
-	<p class="mb-4 dark:text-slate-300">Phil Lennon, a specialist Frontend &amp; UI Consultant with Full Stack development and leadership experience from Manchester, UK.</p>
-	<p class="mb-6 dark:text-slate-300">With 18 years working in tech, I can help build a team, processes and development culture from scratch or just quickly pitch in to build a new idea.</p>
-	<p class="mb-4 text-slate-400 dark:text-slate-500">
-		<a href="https://www.linkedin.com/in/frontendphil/" aria-label="Phil Lennon's LinkedIn profile" target="_blank" rel="noopener noreferrer" class="inline-block hover:text-blue-600 dark:hover:text-blue-400 motion-safe:transition-colors motion-safe:duration-200">
-			<FontAwesome icon="fa-linkedin" class="text-2xl" title="LinkedIn profile" />
-		</a>
-		<a href="https://bsky.app/profile/frontendphil.bsky.social" aria-label="Phil Lennon's Bluesky profile" target="_blank" rel="noopener noreferrer" class="inline-block ml-2 hover:text-blue-600 dark:hover:text-blue-400 motion-safe:transition-colors motion-safe:duration-200">
-			<FontAwesome icon="fa-square-bluesky" class="text-2xl" title="Bluesky profile" />
-		</a>
-	</p>
-	<p class="dark:text-slate-300">Email: <a class="link" href="mailto:enquiry@phil.dev">enquiry@phil.dev</a></p>
+	<div class="container mx-auto max-w-full md:max-w-2xl">
+		<div class="card-container perspective-1000 w-full">
+			<div class="card grid grid-cols-1 w-full motion-safe:transition-transform motion-safe:duration-600 motion-safe:ease-in-out preserve-3d">
+				<div class="card-front col-start-1 row-start-1 backface-hidden px-4 py-8 mx-4 mb-8 mt-4 md:mt-20 md:px-16 md:py-16 bg-white dark:bg-slate-800 motion-safe:transition-colors motion-safe:duration-300">
+					<ProfileAudio></ProfileAudio>
+					<h1 class="text-4xl font-bold tracking-tight text-slate-700 dark:text-slate-200 mb-6">Product-Driven Engineer for Hire</h1>
+					<p class="mb-4 dark:text-slate-300">I work with teams as a contractor, consultant, or fractional lead to help ship better products - faster.</p>
+					<p class="mb-6 dark:text-slate-300">I'm Phil Lennon. With 18 years in tech, I've led teams, built engineering culture from the ground up, and helped ship user-first products fast. Whether it's shaping process, mentoring developers, or diving into code, I bring a balance of UX sensibility, technical depth, and delivery focus.</p>
+					<p class="mb-4 dark:text-slate-300">Need an engineer who thinks like a product owner and delivers like a tech lead?</p>
+					<p class="mb-8 dark:text-slate-300"><button class="link cursor-pointer js-flip-button">Lets talk.</button></p>
+					<p class="mb-0 text-slate-400 dark:text-slate-500">
+						<a href="https://www.linkedin.com/in/frontendphil/" aria-label="Phil Lennon's LinkedIn profile" target="_blank" rel="noopener noreferrer" class="inline-block hover:text-blue-600 dark:hover:text-blue-400 motion-safe:transition-colors motion-safe:duration-200">
+							<FontAwesome icon="fa-linkedin" class="text-2xl" title="LinkedIn profile" />
+						</a>
+						<a href="https://bsky.app/profile/frontendphil.bsky.social" aria-label="Phil Lennon's Bluesky profile" target="_blank" rel="noopener noreferrer" class="inline-block ml-1 hover:text-blue-600 dark:hover:text-blue-400 motion-safe:transition-colors motion-safe:duration-200">
+							<FontAwesome icon="fa-square-bluesky" class="text-2xl" title="Bluesky profile" />
+						</a>
+					</p>
+				</div>
+				
+				<div class="card-back col-start-1 row-start-1 backface-hidden rotate-y-180 px-4 py-8 mx-4 mb-8 mt-4 md:mt-20 md:px-16 md:py-24 bg-white dark:bg-slate-800 motion-safe:transition-colors motion-safe:duration-300">
+					<ContactForm></ContactForm>
+				</div>
+			</div>
+		</div>
+	</div>
 </Layout>
 
 <style>
-	.link {
-		background-image: linear-gradient(120deg, #80fa93, #8fbaf0);
-		background-position: 0 100%;
-		background-repeat: no-repeat;
-		background-size: 100% .15rem;
-		transition: background-size .2s ease-in;
-	}
+.perspective-1000 {
+	perspective: 1000px;
+}
+
+.preserve-3d {
+	transform-style: preserve-3d;
+}
+
+.backface-hidden {
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+	transform: rotateY(180deg);
+}
+
+.card-container.flipped .card {
+	transform: rotateY(180deg);
+}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const cardContainer = document.querySelector('.card-container');
+	const flipButton = document.querySelector('.js-flip-button');
+	const backButton = document.querySelector('.js-back-button');
+	
+	function flipToBack() {
+		cardContainer?.classList.add('flipped');
+	}
+	
+	function flipToFront() {
+		cardContainer?.classList.remove('flipped');
+	}
+	
+	flipButton?.addEventListener('click', flipToBack);
+	backButton?.addEventListener('click', flipToFront);
+	
+	const contactForm = document.querySelector('.js-contact-form') as HTMLFormElement;
+	const submitButton = document.querySelector('.js-submit-button') as HTMLButtonElement;
+	const buttonText = document.querySelector('.js-button-text') as HTMLElement;
+	const buttonSpinner = document.querySelector('.js-button-spinner') as HTMLElement;
+	const formMessage = document.getElementById('form-message') as HTMLElement;
+	
+	contactForm?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		
+		if (!submitButton || !buttonText || !buttonSpinner || !formMessage) return;
+		
+		submitButton.disabled = true;
+		buttonText.classList.add('hidden');
+		buttonSpinner.classList.remove('hidden');
+		
+		try {
+			const formData = new FormData(contactForm);
+			const response = await fetch('/api/contact', {
+				method: 'POST',
+				body: formData,
+			});
+			
+			const result = await response.json();
+			
+			if (response.ok) {
+				formMessage.textContent = 'Thank you! Your message has been sent.';
+				formMessage.className = 'p-3 rounded-md text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+				contactForm.reset();
+				
+				setTimeout(() => {
+					formMessage.classList.add('hidden');
+					flipToFront();
+				}, 3000);
+			} else {
+				formMessage.textContent = result.error || 'Failed to send message. Please try again.';
+				formMessage.className = 'p-3 rounded-md text-sm bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+			}
+		} catch (error) {
+			formMessage.textContent = 'Network error. Please try again.';
+			formMessage.className = 'p-3 rounded-md text-sm bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+		} finally {
+			submitButton.disabled = false;
+			buttonText.classList.remove('hidden');
+			buttonSpinner.classList.add('hidden');
+		}
+	});
+});
+</script>

@@ -1,0 +1,86 @@
+---
+import FontAwesome from './FontAwesome.astro';
+
+const TURNSTILE_SITE_KEY = import.meta.env.TURNSTILE_SITE_KEY;
+---
+
+<div class="contact-form relative">
+	<button 
+		type="button" 
+		class="js-back-button absolute top-0 right-0 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
+		aria-label="Close contact form"
+	>
+		<FontAwesome icon="fa-xmark" class="text-xl text-slate-600 dark:text-slate-400" />
+	</button>
+	
+	<h2 class="text-3xl font-bold tracking-tight text-slate-700 dark:text-slate-200 mb-6">Lets Work Together</h2>
+	
+	<form class="space-y-6 js-contact-form">
+		<div id="form-message" class="hidden p-3 rounded-md text-sm"></div>
+		
+		<div>
+			<label for="name" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Name</label>
+			<input 
+				type="text" 
+				id="name" 
+				name="name" 
+				required
+				maxlength="100"
+				class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+			/>
+		</div>
+		
+		<div>
+			<label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
+			<input 
+				type="email" 
+				id="email" 
+				name="email" 
+				required
+				maxlength="255"
+				class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+			/>
+		</div>
+		
+		<div>
+			<label for="message" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Message</label>
+			<textarea 
+				id="message" 
+				name="message" 
+				rows="4" 
+				required
+				maxlength="1000"
+				class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+			></textarea>
+		</div>
+		
+		<div class="hidden">
+			<label for="website">Website (leave blank)</label>
+			<input 
+				type="text" 
+				id="website" 
+				name="website" 
+				tabindex="-1"
+				autocomplete="off"
+			/>
+		</div>
+		
+		{TURNSTILE_SITE_KEY && (
+			<div class="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY}></div>
+		)}
+		
+		<div>
+			<button 
+				type="submit" 
+				class="js-submit-button cursor-pointer w-full bg-slate-600 hover:bg-slate-700 disabled:bg-slate-400 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
+			>
+				<span class="js-button-text">Send Message</span>
+				<span class="js-button-spinner hidden">Sending...</span>
+			</button>
+		</div>
+	</form>
+	
+	{TURNSTILE_SITE_KEY && (
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer is:inline></script>
+	)}
+</div>
