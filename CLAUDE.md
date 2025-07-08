@@ -6,15 +6,15 @@ This is a personal portfolio website for Phil Lennon (frontendphil), a Frontend 
 ## Tech Stack
 
 ### Core Framework
-- **Astro 5.1.3** - Modern static site generator with component-based architecture
+- **Astro 5.11.0** - Modern static site generator with component-based architecture
 - **Node.js** - Runtime environment (ES modules enabled)
 - **TypeScript** - Type safety with strict configuration
 
 ### Styling & UI
-- **Tailwind CSS 3.4.17** - Utility-first CSS framework
-- **@astrojs/tailwind 5.1.4** - Astro integration for Tailwind
-- **Inter Variable Font** - Typography via @fontsource-variable/inter
-- **Font Awesome** - Icons via @awesome.me/kit-066e6c267d
+- **Tailwind CSS 4.1.11** - Utility-first CSS framework with built-in 3D transforms
+- **@tailwindcss/vite 4.1.11** - Vite plugin for Tailwind CSS v4
+- **Inter Variable Font** - Typography via @fontsource-variable/inter 5.1.1
+- **Font Awesome** - Icons via @awesome.me/kit-066e6c267d 1.0.4
 
 ### Development Tools
 - **TypeScript** - Strict configuration extending "astro/tsconfigs/strict"
@@ -43,7 +43,8 @@ phil.dev-2025/
 │   │   └── images/
 │   │       └── profile.jpg   # Profile image
 │   ├── components/
-│   │   └── profileAudio.astro # Interactive audio profile component
+│   │   ├── profileAudio.astro # Interactive audio profile component
+│   │   └── FontAwesome.astro  # Font Awesome icon component
 │   ├── layouts/
 │   │   └── Layout.astro      # Main page layout
 │   └── pages/
@@ -64,18 +65,26 @@ phil.dev-2025/
 
 ### Component Architecture
 - **profileAudio.astro** - Complex interactive component featuring:
-  - 3D CSS transforms for flip animation
-  - Audio playback functionality
-  - State management with vanilla JavaScript
+  - 3D CSS transforms for flip animation using Tailwind v4 built-in classes
+  - Audio playback functionality with error handling
+  - State management with TypeScript (idle, playing, played states)
   - Hover effects and visual feedback
-  - Accessibility considerations noted in TODOs
+  - Keyboard navigation support
+  - Focus management and accessibility features
+  - Motion preference detection and reduced motion support
+- **FontAwesome.astro** - Icon component with:
+  - Direct SVG generation from Font Awesome kit
+  - Support for solid and brand icons
+  - Customizable classes and titles
+  - Proper accessibility attributes
 
 ### Styling Approach
-- **Tailwind CSS** with utility classes
-- Custom CSS for specific components (like gradient links)
-- Responsive design patterns
-- Motion-reduce preferences respected
-- Custom 3D transforms and animations
+- **Tailwind CSS v4** with utility classes and built-in 3D transforms
+- Custom CSS for specific components (3D flip animations, hover effects)
+- Responsive design patterns with mobile-first approach
+- Motion-reduce preferences respected with @media queries
+- Transform-gpu classes for hardware acceleration
+- Focus-visible styling for accessibility
 
 ## Development Patterns & Conventions
 
@@ -105,11 +114,15 @@ phil.dev-2025/
 ## Key Features
 
 ### Interactive Profile Component
-- 3D flip animation on hover
-- Audio playback with visual feedback
-- Multiple states: play, playing, played
-- Animation locking during playback
-- Icons change based on state
+- 3D flip animation on hover using Tailwind v4 transform-3d utilities
+- Audio playback with error handling and preload="none"
+- Multiple states: idle, playing, played with TypeScript state management
+- Animation locking during playback to prevent conflicts
+- Dynamic icon changes: play → volume → game-console-handheld
+- Keyboard navigation support (Enter/Space keys)
+- Focus management with blur after mouse interaction
+- Automatic reset to idle state after 2 seconds
+- Motion preference detection to disable animations
 
 ### Responsive Design
 - Mobile-first approach
@@ -139,11 +152,11 @@ phil.dev-2025/
 ## Dependencies Analysis
 
 ### Production Dependencies
-- **@astrojs/tailwind** - Tailwind integration
-- **@awesome.me/kit-066e6c267d** - Font Awesome icons
-- **@fontsource-variable/inter** - Inter variable font
-- **astro** - Core framework
-- **tailwindcss** - CSS framework
+- **@awesome.me/kit-066e6c267d** 1.0.4 - Font Awesome icons with SVG generation
+- **@fontsource-variable/inter** 5.1.1 - Inter variable font
+- **@tailwindcss/vite** 4.1.11 - Vite plugin for Tailwind CSS v4
+- **astro** 5.11.0 - Core framework
+- **tailwindcss** 4.1.11 - CSS framework with built-in 3D transforms
 
 ### Development Workflow
 - No test framework configured
@@ -154,10 +167,12 @@ phil.dev-2025/
 ## Development Notes
 
 ### TODOs Identified
-1. Upgrade to Tailwind v4 for built-in 3D transforms
-2. Improve accessibility (keyboard navigation, motion preferences)
-3. Validate mobile functionality
-4. Fix hover radius edge cases
+1. ✅ Upgrade to Tailwind v4 for built-in 3D transforms - COMPLETED
+2. ✅ Improve accessibility (keyboard navigation, motion preferences) - COMPLETED
+3. Validate mobile functionality and touch interactions
+4. Fix hover radius edge cases in profile component
+5. Consider adding ARIA live regions for audio state changes
+6. Review FontAwesome component for more official SVG generation method
 
 ### Git Configuration
 - Standard .gitignore for Node.js/Astro projects
@@ -170,21 +185,25 @@ phil.dev-2025/
 2. **Start development**: `npm run dev`
 3. **Main files to understand**:
    - `/src/pages/index.astro` - Homepage content
-   - `/src/components/profileAudio.astro` - Interactive component
+   - `/src/components/profileAudio.astro` - Interactive component with 3D transforms
+   - `/src/components/FontAwesome.astro` - Icon component with SVG generation
    - `/src/layouts/Layout.astro` - Site layout
 4. **Key patterns**:
    - Astro components with frontmatter
-   - Tailwind utility classes
-   - JavaScript in `<script>` tags
-   - CSS in `<style>` blocks
+   - Tailwind v4 utility classes with built-in 3D transforms
+   - TypeScript in `<script>` tags for state management
+   - CSS in `<style>` blocks for custom animations
+   - Icon SVG generation from Font Awesome kit objects
 
 ## Deployment
+
 - Configuration suggests Vercel deployment
 - Static site generation suitable for CDN deployment
 - Build output in `/dist/` directory
 
 ## Contact Information
+
 - **Owner**: Phil Lennon (frontendphil)
-- **Email**: enquiry@phil.dev
-- **LinkedIn**: https://www.linkedin.com/in/frontendphil/
-- **Bluesky**: https://bsky.app/profile/frontendphil.bsky.social
+- **Email**: <enquiry@phil.dev>
+- **LinkedIn**: <https://www.linkedin.com/in/frontendphil/>
+- **Bluesky**: <https://bsky.app/profile/frontendphil.bsky.social>
