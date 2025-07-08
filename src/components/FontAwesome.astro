@@ -1,0 +1,47 @@
+---
+import { faPlay, faVolume, faGameConsoleHandheld } from '@awesome.me/kit-066e6c267d/icons/classic/solid';
+import { faLinkedin, faSquareBluesky } from '@awesome.me/kit-066e6c267d/icons/classic/brands';
+
+interface Props {
+  icon: string;
+  class?: string;
+  title?: string;
+}
+
+const { icon: iconName, class: className = '', title } = Astro.props;
+
+const iconMap: Record<string, any> = {
+  'fa-play': faPlay,
+  'fa-volume': faVolume,
+  'fa-game-console-handheld': faGameConsoleHandheld,
+  'fa-linkedin': faLinkedin,
+  'fa-square-bluesky': faSquareBluesky,
+};
+
+let iconSvg = '';
+const iconObj = iconMap[iconName];
+if (iconObj) {
+  try {
+    // Generate SVG from icon object
+    // NOTE: Do we actually need to do this? is there a more offical way?
+    const [width, height, , , svgPathData] = iconObj.icon;
+    const pathData = Array.isArray(svgPathData) ? svgPathData.join(' ') : svgPathData;
+    iconSvg = `<svg viewBox="0 0 ${width} ${height}" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="${pathData}"></path>
+    </svg>`;
+  } catch (error) {
+    console.error(`Failed to generate icon ${iconName}:`, error);
+  }
+}
+---
+
+<span class={`inline-block ${className}`} title={title} set:html={iconSvg}></span>
+
+<style>
+  span :global(svg) {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: -0.125em;
+  }
+</style>

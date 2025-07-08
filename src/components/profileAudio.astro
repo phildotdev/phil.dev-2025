@@ -1,96 +1,216 @@
 ---
 import { Image } from 'astro:assets';
 import profileImage from '../assets/images/profile.jpg';
+import FontAwesome from './FontAwesome.astro';
 
-// TODO: Tailwind v4 has classes baked in for preserve-3d, rotate and backface-visibility. Use defaults when available
-// TODO: Accessability improvements, ie keyboard navigation, respects motion preferences, etc
-// TODO: Make work/validate its working on mobile
-// TODO: Fix the slight mismatch of height/width when on the edge of the hover radius
+// TODO: Can move of this bespoke css use tailwind when we update to v4?
 ---
-<div class="js-audio w-24 h-24 mb-8 perspective-normal">
-	<div class="js-audio-animation-parent relative duration-500 transform-gpu motion-reduce:hover:transform-none [transform-style:preserve-3d] hover:[transform:rotateY(180deg)]"> 
-		<div class="js-audio-animation-profile absolute inset-0 w-24 h-24 [backface-visibility:hidden]">
-			<Image class="rounded-full w-24 h-24" src={profileImage} loading="eager" alt="Profile of me, taken in New Zealand" />
-		</div>
-		<div class="js-audio-animation-audio absolute inset-0 w-24 h-24 flex items-center justify-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
-			<button class="text-slate-600">
-				<span class="js-audio-play js-audio-icon-play block"><i class="text-5xl fa-regular fa-play"></i></span>
-				<span class="js-audio-icon-playing hidden"><i class="text-5xl fa-regular fa-volume"></i></span>
-				<span class="js-audio-icon-played hidden"><i class="text-5xl fa-regular fa-game-console-handheld"></i></span>
-			</button>
 
-			<audio class="js-audio-element" preload='none'>
-				<source src="/frontendphil.mp3" type="audio/mp3" />
-			</audio>			
+<div class="profile-audio w-24 h-24 mb-8 relative [perspective:1000px]" role="img" aria-label="Interactive profile picture with audio introduction">
+	<div class="profile-container relative w-full h-full cursor-pointer transition-transform duration-500 ease-in-out transform-gpu [transform-style:preserve-3d] motion-reduce:transition-none">
+		<div class="profile-card relative w-full h-full [transform-style:preserve-3d]">
+			<div class="profile-front absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-full [transform:rotateY(0deg)]">
+				<Image 
+					class="w-full h-full object-cover rounded-full" 
+					src={profileImage} 
+					loading="eager" 
+					alt="Profile of me, taken in New Zealand" 
+				/>
+			</div>
+			<div class="profile-back absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-full [transform:rotateY(180deg)] bg-slate-100 flex items-center justify-center transition-shadow duration-200">
+				<button 
+					class="bg-transparent border-none text-slate-600 text-5xl cursor-pointer p-2 rounded-full transition-colors duration-200 hover:text-slate-700 focus:outline-none z-10 relative audio-button" 
+					aria-label="Play audio introduction"
+					type="button"
+				>
+					<span class="block text-5xl leading-none icon-play" aria-hidden="true">
+						<FontAwesome icon="fa-play" class="text-5xl" />
+					</span>
+					<span class="hidden text-5xl leading-none icon-playing" aria-hidden="true">
+						<FontAwesome icon="fa-volume" class="text-5xl" />
+					</span>
+					<span class="hidden text-5xl leading-none icon-played" aria-hidden="true">
+						<FontAwesome icon="fa-game-console-handheld" class="text-5xl" />
+					</span>
+				</button>
+				<audio preload="none">
+					<source src="/frontendphil.mp3" type="audio/mp3" />
+					Your browser does not support the audio element.
+				</audio>
+			</div>
 		</div>
 	</div>
 </div>
 
 <style>
+	.profile-audio::before {
+		content: '';
+		position: absolute;
+		top: -0.75rem;
+		left: -0.75rem;
+		right: -0.75rem;
+		bottom: -0.75rem;
+		z-index: -1;
+		border-radius: 50%;
+	}
+
+	.profile-audio:hover .profile-container,
+	.profile-container:focus-within,
+	.profile-container.flipped,
+	.profile-container.locked {
+		transform: rotateY(180deg);
+	}
+
+	.profile-container.locked {
+		pointer-events: none;
+	}
+
+	.profile-container:has(button:focus-visible) .profile-back {
+		box-shadow: 0 0 0 3px #3b82f6;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.profile-audio:hover .profile-container,
+		.profile-container:focus-within {
+			transform: none;
+		}
+	}
 </style>
 
 <script>
-  	typeof window !== 'undefined' && document.addEventListener('DOMContentLoaded', function () {
-		const containerEl = document.querySelector('.js-audio') as HTMLElement;
+	document.addEventListener('DOMContentLoaded', () => {
+		const profileAudio = document.querySelector('.profile-audio') as HTMLElement;
+		if (!profileAudio) return;
 
-		if (!containerEl) {
-			return;
-		}		
+		const elements = {
+			container: profileAudio.querySelector('.profile-container') as HTMLElement,
+			audioElement: profileAudio.querySelector('audio') as HTMLAudioElement,
+			button: profileAudio.querySelector('.audio-button') as HTMLButtonElement,
+			playIcon: profileAudio.querySelector('.icon-play') as HTMLElement,
+			playingIcon: profileAudio.querySelector('.icon-playing') as HTMLElement,
+			playedIcon: profileAudio.querySelector('.icon-played') as HTMLElement,
+		};
 
-		const audioEl = document.querySelector('.js-audio-element') as HTMLAudioElement;
-		const buttonEl = document.querySelector('.js-audio-play') as HTMLElement;
-		const animationParentEl = document.querySelector('.js-audio-animation-parent') as HTMLElement;
-		const animationProfileEl = document.querySelector('.js-audio-animation-profile') as HTMLElement;
-		const animationAudioEl = document.querySelector('.js-audio-animation-audio') as HTMLElement;
-		const playIconEl = document.querySelector('.js-audio-icon-play') as HTMLElement;
-		const playingIconEl = document.querySelector('.js-audio-icon-playing') as HTMLElement;
-		const playedIconEl = document.querySelector('.js-audio-icon-played') as HTMLElement;
+		if (!elements.container || !elements.audioElement || !elements.button) return;
 
-    	buttonEl.addEventListener('click', () => {
-			playAudio();
-		});
+		let currentState: 'idle' | 'playing' | 'played' = 'idle';
+		let resetTimeout: number | null = null;
+		let wasKeyboardActivated = false;
 
-		const playAudio = () => {
-			audioEl.play();			
-			changeIcon();
+		// Event listeners
+		elements.button.addEventListener('click', handleButtonClick);
+		elements.button.addEventListener('keydown', handleKeydown);
+		elements.container.addEventListener('focusin', handleFocusIn);
+		elements.container.addEventListener('focusout', handleFocusOut);
+		elements.audioElement.addEventListener('ended', handleAudioEnded);
+		elements.audioElement.addEventListener('error', handleAudioError);
+
+		function handleButtonClick() {
+			if (currentState === 'idle') {
+				playAudio();
+				if (!wasKeyboardActivated) {
+					elements.button.blur();
+				}
+				wasKeyboardActivated = false;
+			}
 		}
 
-		const changeIcon = () => {
-			// Set an animation lock while audio plays
-			animationParentEl.classList.add('!transform-none');
-			animationProfileEl.classList.add('hidden');
-			animationAudioEl.classList.add('!transform-none');
-
-			playIconEl.classList.remove('block');
-			playIconEl.classList.add('hidden');
-
-			playingIconEl.classList.remove('hidden');
-			playingIconEl.classList.add('block');
-	}
-
-		const resetPlayer = () => {
-			// Wait then remove animation lock
-			setTimeout(function () {
-				animationParentEl.classList.remove('!transform-none');
-				animationProfileEl.classList.remove('hidden');
-				animationAudioEl.classList.remove('!transform-none');
-
-				playedIconEl.classList.remove('block');
-				playedIconEl.classList.add('hidden');	
-
-				playIconEl.classList.remove('hidden');
-				playIconEl.classList.add('block');
-			}, 2000);					
+		function handleKeydown(event: KeyboardEvent) {
+			if (event.key === 'Enter' || event.key === ' ') {
+				event.preventDefault();
+				wasKeyboardActivated = true;
+				handleButtonClick();
+			}
 		}
 
-		audioEl.addEventListener('ended', () => {
-			playingIconEl.classList.remove('block');
-			playingIconEl.classList.add('hidden');
+		function handleFocusIn() {
+			if (currentState === 'idle') {
+				elements.container.classList.add('flipped');
+			}
+		}
 
-			playedIconEl.classList.remove('hidden');
-			playedIconEl.classList.add('block');
+		function handleFocusOut() {
+			if (currentState === 'idle') {
+				elements.container.classList.remove('flipped');
+			}
+		}
 
-			resetPlayer();	
-		});			
+		function handleAudioEnded() {
+			setState('played');
+			scheduleReset();
+		}
+
+		function handleAudioError() {
+			console.error('Audio playback error');
+			setState('idle');
+		}
+
+		async function playAudio() {
+			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+				return;
+			}
+
+			try {
+				setState('playing');
+				await elements.audioElement.play();
+			} catch (error) {
+				console.error('Audio playback failed:', error);
+				setState('idle');
+			}
+		}
+
+		function setState(newState: typeof currentState) {
+			currentState = newState;
+			updateUI();
+		}
+
+		function updateUI() {
+			if (resetTimeout) {
+				clearTimeout(resetTimeout);
+				resetTimeout = null;
+			}
+
+			const { container, button } = elements;
+
+			switch (currentState) {
+				case 'idle':
+					container.classList.remove('locked', 'flipped');
+					button.setAttribute('aria-label', 'Play audio introduction');
+					break;
+				
+				case 'playing':
+					container.classList.add('locked');
+					showIcon('playing');
+					button.setAttribute('aria-label', 'Audio is playing');
+					break;
+				
+				case 'played':
+					container.classList.add('locked');
+					showIcon('played');
+					button.setAttribute('aria-label', 'Audio finished playing');
+					break;
+			}
+		}
+
+		function showIcon(iconType: 'play' | 'playing' | 'played') {
+			const { playIcon, playingIcon, playedIcon } = elements;
+		
+			[playIcon, playingIcon, playedIcon].forEach(icon => icon?.classList.add('hidden'));
+
+			const iconMap = { play: playIcon, playing: playingIcon, played: playedIcon };
+			iconMap[iconType]?.classList.remove('hidden');
+		}
+
+		function scheduleReset() {
+			resetTimeout = window.setTimeout(() => {
+				setState('idle');
+				// After the rotation completes, change icon back to play for cleaner look
+				setTimeout(() => {
+					if (currentState === 'idle') {
+						showIcon('play');
+					}
+				}, 500);
+			}, 2000);
+		}
 	});
 </script>
