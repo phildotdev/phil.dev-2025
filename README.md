@@ -17,8 +17,8 @@ All commands are run from the root of the project, from a terminal:
 
 ## 🛠️ Tech Stack
 
-- **[Astro 5.1](https://astro.build)** - Static site generator
-- **[Tailwind 3](https://tailwindcss.com)** - Utility-first CSS framework
+- **[Astro 5](https://astro.build)** - Static site generator
+- **[Tailwind 4](https://tailwindcss.com)** - Utility-first CSS framework
 - **[TypeScript](https://www.typescriptlang.org)** - Type safety
 - **[Font Awesome Pro](https://fontawesome.com)** - Icon library
 - **[Inter Variable Font](https://fonts.google.com/specimen/Inter)** - Typography
