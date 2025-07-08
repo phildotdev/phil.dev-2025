@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import '@fontsource-variable/inter';
+import DarkModeToggle from '../components/DarkModeToggle.astro';
 ---
 <!doctype html>
 <html lang="en">
@@ -10,9 +11,10 @@ import '@fontsource-variable/inter';
 		<link rel="icon" type="image/svg+xml" href="/favicon.png" />
 		<title>Phil Lennon (frontendphil) - A web Frontend and Full stack consultant, based in Manchester UK</title>
 	</head>
-	<body class="bg-zinc-50">
+	<body class="bg-zinc-50 dark:bg-slate-900 motion-safe:transition-colors motion-safe:duration-300">
+		<DarkModeToggle />
 		<div class="container md:max-w-2xl md:mx-auto">
-			<main class="px-4 py-8 mx-4 mb-8 mt-4 md:mt-20 md:px-16 md:py-24 bg-white">
+			<main class="px-4 py-8 mx-4 mb-8 mt-4 md:mt-20 md:px-16 md:py-24 bg-white dark:bg-slate-800 motion-safe:transition-colors motion-safe:duration-300">
 				<slot />
 			</main>
 		</div>

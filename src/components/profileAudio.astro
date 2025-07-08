@@ -15,9 +15,9 @@ import FontAwesome from './FontAwesome.astro';
 					alt="Profile of me, taken in New Zealand" 
 				/>
 			</div>
-			<div class="profile-back absolute inset-0 w-full h-full backface-hidden rounded-full [transform:rotateY(180deg)] bg-slate-100 flex items-center justify-center transition-shadow duration-200">
+			<div class="profile-back absolute inset-0 w-full h-full backface-hidden rounded-full [transform:rotateY(180deg)] bg-slate-100 dark:bg-slate-700 flex items-center justify-center transition-shadow duration-200">
 				<button 
-					class="bg-transparent border-none text-slate-600 text-5xl cursor-pointer p-2 rounded-full transition-colors duration-200 hover:text-slate-700 focus:outline-none z-10 relative audio-button" 
+					class="bg-transparent border-none text-slate-600 dark:text-slate-300 text-5xl cursor-pointer p-2 rounded-full transition-colors duration-200 hover:text-slate-700 dark:hover:text-slate-100 focus:outline-none z-10 relative audio-button" 
 					aria-label="Play audio introduction"
 					type="button"
 				>
@@ -59,6 +59,13 @@ import FontAwesome from './FontAwesome.astro';
 		transform: rotateY(180deg);
 	}
 
+	@media (prefers-reduced-motion: reduce) {
+		.profile-audio:hover .profile-container,
+		.profile-container:focus-within {
+			transform: none;
+		}
+	}
+
 	.profile-container.locked {
 		pointer-events: none;
 	}
@@ -67,12 +74,10 @@ import FontAwesome from './FontAwesome.astro';
 		box-shadow: 0 0 0 3px #3b82f6;
 	}
 
-	@media (prefers-reduced-motion: reduce) {
-		.profile-audio:hover .profile-container,
-		.profile-container:focus-within {
-			transform: none;
-		}
+	.dark .profile-container:has(button:focus-visible) .profile-back {
+		box-shadow: 0 0 0 3px #60a5fa;
 	}
+
 </style>
 
 <script>
@@ -144,10 +149,6 @@ import FontAwesome from './FontAwesome.astro';
 		}
 
 		async function playAudio() {
-			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-				return;
-			}
-
 			try {
 				setState('playing');
 				await elements.audioElement.play();
