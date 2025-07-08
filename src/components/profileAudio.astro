@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import profileImage from '../assets/images/profile.jpg';
+import FontAwesome from './FontAwesome.astro';
 
 // TODO: Can move of this bespoke css use tailwind when we update to v4?
 ---
@@ -18,18 +19,18 @@ import profileImage from '../assets/images/profile.jpg';
 			</div>
 			<div class="profile-back absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-full [transform:rotateY(180deg)] bg-slate-100 flex items-center justify-center transition-shadow duration-200">
 				<button 
-					class="bg-transparent border-none text-slate-600 text-5xl cursor-pointer p-2 rounded-full transition-colors duration-200 hover:text-slate-700 focus:outline-none z-10 relative" 
+					class="bg-transparent border-none text-slate-600 text-5xl cursor-pointer p-2 rounded-full transition-colors duration-200 hover:text-slate-700 focus:outline-none z-10 relative audio-button" 
 					aria-label="Play audio introduction"
 					type="button"
 				>
-					<span class="block text-5xl leading-none" aria-hidden="true">
-						<i class="fa-regular fa-play"></i>
+					<span class="block text-5xl leading-none icon-play" aria-hidden="true">
+						<FontAwesome icon="fa-play" class="text-5xl" />
 					</span>
-					<span class="hidden text-5xl leading-none" aria-hidden="true">
-						<i class="fa-regular fa-volume"></i>
+					<span class="hidden text-5xl leading-none icon-playing" aria-hidden="true">
+						<FontAwesome icon="fa-volume" class="text-5xl" />
 					</span>
-					<span class="hidden text-5xl leading-none" aria-hidden="true">
-						<i class="fa-regular fa-game-console-handheld"></i>
+					<span class="hidden text-5xl leading-none icon-played" aria-hidden="true">
+						<FontAwesome icon="fa-game-console-handheld" class="text-5xl" />
 					</span>
 				</button>
 				<audio preload="none">
