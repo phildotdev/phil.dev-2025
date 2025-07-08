@@ -1,0 +1,73 @@
+---
+import FontAwesome from './FontAwesome.astro';
+---
+
+<button 
+  class="dark-mode-toggle fixed top-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl motion-safe:transition-all motion-safe:duration-200 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+  aria-label="Toggle dark mode"
+  aria-pressed="false"
+  type="button"
+>
+  <span class="sun-icon dark:hidden" aria-hidden="true">
+    <FontAwesome icon="fa-sun" class="text-xl text-slate-700" />
+  </span>
+  <span class="moon-icon hidden dark:block" aria-hidden="true">
+    <FontAwesome icon="fa-moon" class="text-xl text-slate-300" />
+  </span>
+</button>
+
+<script>
+  function initDarkMode() {
+    const toggle = document.querySelector('.dark-mode-toggle');
+    if (!toggle) return;
+
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    function updateAriaStates() {
+      if (!toggle) return;
+      const isDark = document.documentElement.classList.contains('dark');
+      toggle.setAttribute('aria-pressed', isDark.toString());
+      toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    updateAriaStates();
+
+    toggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      
+      if (isDark) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+      
+      updateAriaStates();
+    });
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        if (e.matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        updateAriaStates();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDarkMode);
+  } else {
+    initDarkMode();
+  }
+</script>

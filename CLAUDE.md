@@ -44,9 +44,10 @@ phil.dev-2025/
 │   │       └── profile.jpg   # Profile image
 │   ├── components/
 │   │   ├── profileAudio.astro # Interactive audio profile component
-│   │   └── FontAwesome.astro  # Font Awesome icon component
+│   │   ├── FontAwesome.astro  # Font Awesome icon component
+│   │   └── DarkModeToggle.astro # Dark mode toggle component
 │   ├── layouts/
-│   │   └── Layout.astro      # Main page layout
+│   │   └── Layout.astro      # Main page layout with dark mode support
 │   └── pages/
 │       └── index.astro       # Homepage
 ├── astro.config.mjs          # Astro configuration
@@ -58,10 +59,11 @@ phil.dev-2025/
 ## Key Components & Architecture
 
 ### Layout System
-- **Layout.astro** - Main layout component with responsive container
+- **Layout.astro** - Main layout component with responsive container and dark mode support
 - Uses semantic HTML5 structure
 - Responsive design with mobile-first approach
 - Includes Font Awesome integration
+- Dark mode toggle integration with theme persistence
 
 ### Component Architecture
 - **profileAudio.astro** - Complex interactive component featuring:
@@ -72,6 +74,12 @@ phil.dev-2025/
   - Keyboard navigation support
   - Focus management and accessibility features
   - Motion preference detection and reduced motion support
+- **DarkModeToggle.astro** - Theme switching component with:
+  - System preference detection and localStorage persistence
+  - ARIA states for accessibility (aria-pressed, dynamic aria-label)
+  - Focus management with visible focus rings
+  - Respects prefers-reduced-motion for transitions
+  - Icon switching between sun/moon based on theme state
 - **FontAwesome.astro** - Icon component with:
   - Direct SVG generation from Font Awesome kit
   - Support for solid and brand icons
@@ -80,9 +88,10 @@ phil.dev-2025/
 
 ### Styling Approach
 - **Tailwind CSS v4** with utility classes and built-in 3D transforms
+- **Dark mode support** with `class` strategy and `dark:` prefixed utilities
 - Custom CSS for specific components (3D flip animations, hover effects)
 - Responsive design patterns with mobile-first approach
-- Motion-reduce preferences respected with @media queries
+- Motion-reduce preferences respected with `motion-safe:` prefixes
 - Transform-gpu classes for hardware acceleration
 - Focus-visible styling for accessibility
 
@@ -110,8 +119,17 @@ phil.dev-2025/
 - Custom CSS in `<style>` blocks when needed
 - Responsive design with `md:` breakpoints
 - Color scheme: slate/zinc palette with white backgrounds
+- Dark mode: slate-900/slate-800 backgrounds with appropriate text colors
+- Motion-safe prefixes for animations and transitions
 
 ## Key Features
+
+### Dark Mode Support
+- System preference detection with fallback to light mode
+- Manual toggle with localStorage persistence
+- ARIA states and accessibility compliance
+- Smooth transitions with motion-safe prefixes
+- Comprehensive dark theme with slate color palette
 
 ### Interactive Profile Component
 - 3D flip animation on hover using Tailwind v4 transform-3d utilities
@@ -140,8 +158,10 @@ phil.dev-2025/
 ### Accessibility
 - Semantic HTML structure
 - Alt text for images
-- ARIA considerations noted in TODOs
-- Motion preferences respected
+- ARIA states and labels for interactive elements
+- Motion preferences respected with motion-safe prefixes
+- Focus management and keyboard navigation
+- External links with proper security attributes (rel="noopener noreferrer")
 
 ### Browser Compatibility
 - Modern ES modules
@@ -169,10 +189,12 @@ phil.dev-2025/
 ### TODOs Identified
 1. ✅ Upgrade to Tailwind v4 for built-in 3D transforms - COMPLETED
 2. ✅ Improve accessibility (keyboard navigation, motion preferences) - COMPLETED
-3. Validate mobile functionality and touch interactions
-4. Fix hover radius edge cases in profile component
-5. Consider adding ARIA live regions for audio state changes
-6. Review FontAwesome component for more official SVG generation method
+3. ✅ Implement dark mode with proper ARIA states - COMPLETED
+4. Make profileAudio work with prefers-reduced-motion (pending)
+5. ✅ Validate mobile functionality and touch interactions - COMPLETED
+6. ✅ Fix hover radius edge cases in profile component - COMPLETED
+7. ✅ Consider adding ARIA live regions for audio state changes - COMPLETED
+8. Review FontAwesome component for more official SVG generation method
 
 ### Git Configuration
 - Standard .gitignore for Node.js/Astro projects
@@ -184,16 +206,19 @@ phil.dev-2025/
 1. **Install dependencies**: `npm install`
 2. **Start development**: `npm run dev`
 3. **Main files to understand**:
-   - `/src/pages/index.astro` - Homepage content
+   - `/src/pages/index.astro` - Homepage content with social links
    - `/src/components/profileAudio.astro` - Interactive component with 3D transforms
+   - `/src/components/DarkModeToggle.astro` - Theme switching component
    - `/src/components/FontAwesome.astro` - Icon component with SVG generation
-   - `/src/layouts/Layout.astro` - Site layout
+   - `/src/layouts/Layout.astro` - Site layout with dark mode support
 4. **Key patterns**:
    - Astro components with frontmatter
-   - Tailwind v4 utility classes with built-in 3D transforms
+   - Tailwind v4 utility classes with built-in 3D transforms and dark mode
    - TypeScript in `<script>` tags for state management
    - CSS in `<style>` blocks for custom animations
    - Icon SVG generation from Font Awesome kit objects
+   - ARIA attributes for accessibility
+   - Motion-safe prefixes for respecting user preferences
 
 ## Deployment
 
