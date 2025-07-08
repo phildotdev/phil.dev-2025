@@ -70,16 +70,31 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    if (!(await verifyTurnstile(turnstileToken, clientIP))) {
+    if (
+      import.meta.env.TURNSTILE_SECRET_KEY &&
+      !(await verifyTurnstile(turnstileToken, clientIP))
+    ) {
       return new Response(
         JSON.stringify({ error: "CAPTCHA verification failed" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
+    if (!import.meta.env.RESEND_API_KEY) {
+      console.log("Would send email:", { name, email, message });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Email sent successfully (test mode)",
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const { error } = await resend.emails.send({
-      from: import.meta.env.RESEND_FROM_EMAIL,
-      to: [import.meta.env.RESEND_TO_EMAIL],
+      from:
+        import.meta.env.RESEND_FROM_EMAIL || "Contact Form <noreply@localhost>",
+      to: [import.meta.env.RESEND_TO_EMAIL || "test@localhost"],
       subject: `New Contact Form Submission from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>
